@@ -1,0 +1,18 @@
+# 本机数据 / 缓存 —— 别传上来
+data/
+*.db
+.cache/
+node_modules/
+__pycache__/
+*.pyc
+*.log
+
+# 工具的真实数据是本地生成的，不属于本仓库（示例存档除外）
+提示词数据*.json
+!存档4_示例初级_20260920.json
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
