@@ -1,0 +1,94 @@
+串联记录：一次「ComfyUI 明明在跑、工具却说连不上」的完整排查
+（2026-09-24，作者 + 问题用户实测）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+一、用户报的现象
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· 工具顶栏 🔗 点开，提示「检测到 ComfyUI 在 127.0.0.1:8188 上跑着，但互通节点没答话」
+· 他先后换过 4.0 / 4.2 / 4.3 三个版本、也重启过很多次，一直没修好
+· 他的判断是"节点没装好"，于是反复重装节点 —— 方向其实是错的
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+二、他那边的实际环境（从截图读出来的）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+· ComfyUI：官方**便携版** `D:\ComfyUI_windows_portable`
+  （comfyui-frontend-package 1.52.7 / comfyui-workflow-templates 0.11.66 / 嵌入式 Python / PyTorch cu126）
+· 端口：**8188**（黑窗口写着 `To see the GUI go to: http://127.0.0.1:8188`）
+· 工具：`E:\下载\…\提示词工具.html`，**双击（file://）打开**
+· custom_nodes 下 `ComfyUI-PromptSync` **已经装好**，黑窗口里能看到：
+      [提示词工具] ✅ 互通节点已加载（版本 1.2）：/prompt_sync/ping 可用
+· 浏览器直接打开 `http://127.0.0.1:8188/prompt_sync/ping` 能返回：
+      {"success": true, "node": "PromptSync", "version": "1.2"}
+  → **这一条就证明：节点是好的、端口是对的**（这一步是整件事的分水岭）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+三、决定性证据：F12 → Console 里的红字
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+      GET http://127.0.0.1:8188/prompt_sync/ping   net::ERR_FAILED 403 (Forbidden)
+      Access to fetch at 'http://127.0.0.1:8188/prompt_sync/ping' from origin 'null'
+        has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header ...
+      GET http://127.0.0.1:8188/                    403 (Forbidden)      ← 连根路径也是 403
+      其余端口（8189 / 8190 / 8000 / 8001 / 8080）  ERR_CONNECTION_REFUSED
+
+注意这两件事：
+① **403 而不是 404** → 说明"有人答话，但被拒绝了"，跟"节点没装"完全不是一回事；
+② **在 JS 里读不到这个 403 的"状态码"** —— 对面的 403 不带 CORS 头，`fetch` 只会 reject 成
+   `Failed to fetch`，和"404 节点没装""端口没人听"长得一模一样。
+   所以工具**没法自己分辨**，只能让你做一步实验（打开 ping 页看能不能返回 JSON）。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+四、根因：新版 ComfyUI 自带一层"跨源保护"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ComfyUI 源码 `server.py` 里有这么一段（2026-04 加的，为了让 Firefox 等浏览器先补上 PNA）：
+
+    def create_origin_only_middleware():
+        async def origin_only_middleware(request, handler):
+            if request.headers.get('Sec-Fetch-Site') == 'cross-site':
+                return web.Response(status=403)      # ← 就是这里
+            ...
+
+· 只要请求头里写着"这是别的网站发来的"（`Sec-Fetch-Site: cross-site`），ComfyUI **直接回 403**；
+· 而**双击 HTML 打开的页面（`file://`），浏览器一律把它标成 cross-site**；
+· 于是"file:// 页面 → 新版 ComfyUI"这条直连路**必然被 403**。
+  ⚠️ 这跟互通节点写得对不对**完全无关** —— 请求在到达节点之前就被 ComfyUI 拦掉了。
+
+（另外：ComfyUI 只有在你给了 `--enable-cors-header` 启动参数时才会换成宽松的 CORS 中间件；
+不传就是上面这个"只放行自己那一页"的模式。）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+五、两条解法
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【路 1 · 推荐】用节点自带的「网页版工具」打开（不用改任何设置）
+  1. 确认 `custom_nodes\ComfyUI-PromptSync\web\prompt_tool.html` 在（5.0 起的包/节点里都带）
+  2. **重启一次 ComfyUI**（让它把这个网页挂进自己的目录）
+  3. 浏览器打开：
+         http://127.0.0.1:8188/extensions/ComfyUI-PromptSync/prompt_tool.html
+     —— 这个页面和 ComfyUI **同一个来源**，浏览器的跨源保护不会触发，🔗 一定能连上。
+  4. 网页版的数据存在**它自己那个网址下**的浏览器里（和桌面那份不互通）；
+     想用同一份数据：在一边「存档」导出 json，在另一边读进来。
+
+【路 2 · 改启动参数】给 ComfyUI 放开跨源保护
+  官方便携版：编辑 `run_nvidia_gpu.bat`，在
+      python_embedded\python.exe -s ComfyUI\main.py --windows-standalone-build
+  后面加上      --enable-cors-header
+  然后**重启 ComfyUI**，桌面那份工具（双击 HTML 也行）点 🔗 就通了。
+  ⚠️ 这个参数等于"任何网页都能和你的 ComfyUI 说话"（ComfyUI 默认就是防这个的），
+     自己的电脑上用、用完把参数删掉就恢复原样。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+六、以后遇到同样症状，30 秒判断法
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. 浏览器打开 `http://127.0.0.1:<端口>/prompt_sync/ping`
+   · 返回 JSON（有 "success": true） → **节点是好的** → 你遇到的就是跨源保护 → 走路 1
+   · 404 / Not Found                → 节点真没被加载 → 看黑窗口有没有 `[提示词工具] ✅` 那行，
+                                       并把整个文件夹放进 custom_nodes\ 后重启
+2. 还拿不准就按 F12 → Console，把带 `403` / `CORS` / `blocked` / `ERR_CONNECTION_REFUSED` 的
+   那几行截图发给我 —— 这几行能直接定案（JS 里读不到的状态码，控制台里看得到）。
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+七、结论（一句话）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+节点没问题，是**新版 ComfyUI 不让"别的网页"访问它**；用"和 ComfyUI 同一个来源的网页版工具"
+打开，问题就没了。
+
+—— 提示词工具 5.0 正式版（2026-09-24）
