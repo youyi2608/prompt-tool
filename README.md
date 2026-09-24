@@ -11,11 +11,16 @@
 
 | 方式 | 地址 |
 |---|---|
-| **GitHub Release（最新版）** | 见右侧 **Releases** → `v5.0`（附件里有 `词库.bmz` 和整包 zip） |
+| **整包（推荐）** | [prompt-tool-5.0.zip](https://github.com/youyi2608/prompt-tool/releases/download/v5.0/prompt-tool-5.0.zip)（本体 + 词库包 + 互通节点含网页版 + 示例存档 + 说明文件，7.2 MB） |
+| **只要词库** | [prompt-tool-5.0-dict.bmz](https://github.com/youyi2608/prompt-tool/releases/download/v5.0/prompt-tool-5.0-dict.bmz)（6.75 MB，工具里「📦 词库包」一步导入） |
+| 全部发布页 | <https://github.com/youyi2608/prompt-tool/releases> |
 | 夸克网盘（国内更快） | https://pan.quark.cn/s/10be6fe940ae?pwd=TVQp 提取码 `TVQp` |
-| 国内加速（GitHub 打不开时） | 在 GitHub 下载链接前面加 `https://ghproxy.net/` 或 `https://ghfast.top/` |
+| 国内加速（GitHub 打不开时） | 在上面任意链接前面加 `https://ghproxy.net/` 或 `https://ghfast.top/`，例如<br>`https://ghproxy.net/https://github.com/youyi2608/prompt-tool/releases/download/v5.0/prompt-tool-5.0.zip` |
 
-整包里有什么（7 样）：
+> GitHub 会把附件里的中文名改成英文（所以附件叫 `prompt-tool-5.0.zip` / `prompt-tool-5.0-dict.bmz`），
+> 下载后解压就是上面那张表里的东西。
+
+整包里有什么：
 
 | 文件 | 说明 |
 |---|---|
@@ -24,8 +29,9 @@
 | `ComfyUI-PromptSync\` | ComfyUI 互通节点（可选；里面还带了一份「网页版工具」，见下文） |
 | `存档4_示例初级_20260920.json` | 初级示例存档（99 个按钮 + 分类布局 + 9 条负词） |
 | `示例设置代码.txt` | 配套的界面布局代码（43 字符） |
-| `私发说明.txt` | 上手说明（一页纸） |
-| `连接排查.txt` | **连不上 ComfyUI 就看它**（一步步照做） |
+| `私发说明.txt` / `使用说明_5.0.txt` | 上手说明 |
+| `连接排查.txt` / `连不上_案例记录.txt` | **连不上 ComfyUI 就看这两份**（一个是步骤，一个是真实案例） |
+| `更新公告_5.0.txt` / `README.md` | 这一版更新了什么 / 仓库首页备份 |
 
 ---
 
