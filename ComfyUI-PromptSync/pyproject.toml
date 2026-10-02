@@ -1,7 +1,7 @@
 [project]
 name = "comfyui-prompt-sync"
-version = "1.2.0"
-description = "把桌面上的「提示词工具」和 ComfyUI 接起来：点按钮直接改节点里的提示词"
+version = "1.4.0"
+description = "把桌面上的「提示词工具」和 ComfyUI 接起来（另带中文的「空Latent（自填宽高像素）」「游动羽翼工具栏」「套图排队」三个节点）"
 license = { text = "MIT" }
 requires-python = ">=3.9"
 dependencies = []
