@@ -4,7 +4,10 @@
 而是直接把提示词送进本节点的文本框（正/负各一个）。
 """
 
-from .nodes import PromptSyncFromTool, PromptToolEmptyLatent, PromptToolToolbar, PromptToolBatchQueue
+from .nodes import (PromptSyncFromTool, PromptToolEmptyLatent, PromptToolToolbar,
+                    PromptToolBatchQueue, PromptToolClipSegments, PromptToolTimer,
+                    PromptToolClipWeight, PromptToolLoraPool, PromptToolOptAsk,
+                    PromptToolGallery, PromptToolStage, PromptToolModelPool)
 
 import sys
 
@@ -29,16 +32,32 @@ except Exception as _exc:  # pragma: no cover
 
 NODE_CLASS_MAPPINGS = {
     "PromptSyncFromTool": PromptSyncFromTool,
+    "PromptToolClipSegments": PromptToolClipSegments,
+    "PromptToolClipWeight": PromptToolClipWeight,
     "PromptToolEmptyLatent": PromptToolEmptyLatent,
     "PromptToolToolbar": PromptToolToolbar,
     "PromptToolBatchQueue": PromptToolBatchQueue,
+    "PromptToolTimer": PromptToolTimer,
+    "PromptToolLoraPool": PromptToolLoraPool,
+    "PromptToolOptAsk": PromptToolOptAsk,
+    "PromptToolGallery": PromptToolGallery,
+    "PromptToolStage": PromptToolStage,
+    "PromptToolModelPool": PromptToolModelPool,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
     "PromptSyncFromTool": "提示词同步（来自提示词工具）",
+    "PromptToolClipSegments": "CLIP 文本编码优化节点",
+    "PromptToolClipWeight": "关键词权重（附属节点）",
     "PromptToolEmptyLatent": "空Latent（自填宽高像素）",
     "PromptToolToolbar": "游动羽翼工具栏",
     "PromptToolBatchQueue": "套图排队（来自提示词工具）",
+    "PromptToolTimer": "计时器（休息计时 + 生图效率）",
+    "PromptToolLoraPool": "LoRA 池",
+    "PromptToolOptAsk": "自定义优化窗（节点）",
+    "PromptToolGallery": "图像画廊（展示 + 存档）",
+    "PromptToolStage": "暂存节点（下一批文本）",
+    "PromptToolModelPool": "模型池（多套模型并行）",
 }
 
 # ⚠️ 一个节点模块只会被挂载成一个 web 目录（ComfyUI nodes.py：EXTENSION_WEB_DIRS[module_name]），

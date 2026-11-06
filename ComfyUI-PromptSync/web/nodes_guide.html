@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>节点连线说明书 · 提示词工具（ComfyUI 互通节点）</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f7fb; --card: #ffffff; --text: #1f2430; --muted: #6b7484;
+    --border: #e2e7f0; --accent: #2f6fed; --soft: #eef3fe; --code: #f2f4f8;
+    --warn: #b45309; --warnbg: #fff7e6; --ok: #1a7f4b; --okbg: #eaf7f0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #171a22; --card: #1e222c; --text: #e6eaf2; --muted: #9aa4b6;
+      --border: #2c313d; --accent: #6ea1ff; --soft: #232a3a; --code: #232833;
+      --warn: #ffc46a; --warnbg: #2e2717; --ok: #7ee2ab; --okbg: #16281f; }
+  }
+  body { background: var(--bg); color: var(--text); font: 15px/1.75 "Microsoft YaHei UI", system-ui, sans-serif; padding: 28px 16px 60px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  h1 { font-size: 22px; margin-bottom: 6px; }
+  .sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; }
+  section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+  h2 { font-size: 16px; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 14px; margin: 14px 0 6px; }
+  p, li { font-size: 13.5px; }
+  ul, ol { padding-left: 22px; }
+  li { margin: 3px 0; }
+  code { background: var(--code); border-radius: 5px; padding: 1px 5px; font-family: Consolas, monospace; font-size: 12.5px; }
+  pre { background: var(--code); border: 1px solid var(--border); border-radius: 10px; padding: 12px; overflow-x: auto;
+        font-family: Consolas, monospace; font-size: 12.5px; line-height: 1.65; margin: 8px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0; }
+  th, td { border: 1px solid var(--border); padding: 7px 9px; font-size: 13px; text-align: left; vertical-align: top; }
+  th { background: var(--soft); font-weight: 700; }
+  .tip { background: var(--soft); border-left: 3px solid var(--accent); border-radius: 8px; padding: 9px 12px; margin: 8px 0; font-size: 13px; }
+  .warn { background: var(--warnbg); border-left: 3px solid var(--warn); border-radius: 8px; padding: 9px 12px; margin: 8px 0; font-size: 13px; }
+  .ok { background: var(--okbg); border-left: 3px solid var(--ok); border-radius: 8px; padding: 9px 12px; margin: 8px 0; font-size: 13px; }
+  b.hl { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔌 节点连线说明书</h1>
+  <div class="sub">提示词工具 · ComfyUI 互通节点（一个文件夹 = 13 颗节点）· 2026-11-06 更新（节点包 2.0）</div>
+
+  <section>
+    <h2>30 秒版：到底要连哪几根线</h2>
+    <p>13 颗里，<b class="hl">出图那条链上要接线的只有 3 颗</b>（提示词同步 → 优化节点 → 采样器；空Latent → 采样器），
+       LoRA 池是「把 LoRA 链拖进去、再从池子接出去」，剩下 9 颗都是「摆在画布上当面板用」的，<b>一根线都不用连</b>。</p>
+<pre>
+[检查点加载器] ──CLIP──▶ [CLIP 文本编码优化节点] ──正向──▶ [K 采样器].positive
+                                        └──负向──▶ [K 采样器].negative
+                              ▲
+[提示词同步] ──正提示词──────┘（接「提示词同步·正（可不连）」）
+             └─负提示词────────▶「提示词同步·负（可不连）」
+
+[空Latent] ──LATENT──▶ [K 采样器].latent
+
+[套图排队] / [计时器] / [游动羽翼工具栏] / [关键词权重]：不用连任何线
+</pre>
+    <div class="ok">只要这三样接上，工具点按钮 → 出图这条链就通了。</div>
+  </section>
+
+  <section>
+    <h2>十三颗节点，各干什么、怎么连</h2>
+    <p style="opacity:.75;font-size:13px;margin:-6px 0 10px">（12 颗注册在 ComfyUI 的节点表里 + 1 颗纯前端的「黑箱」，它不占节点列表）</p>
+    <table>
+      <tr><th style="width:170px">节点</th><th>要连的线</th><th>说明</th></tr>
+      <tr>
+        <td><b>提示词同步</b><br>（来自提示词工具）</td>
+        <td>两个<b>输出</b>「正提示词 / 负提示词」→ 下游文本节点的输入</td>
+        <td>工具推过来的正负词就落在这里。<b>只接一个也行、都不接也不影响出图</b>（另一个口空着没事）。
+            没连任何东西时，它也是好的 —— 你可以先在节点上手改。</td>
+      </tr>
+      <tr>
+        <td><b>CLIP 文本编码优化节点</b><br>（就是「优化节点」）</td>
+        <td>输入 <code>clip</code>（<b>必接</b>，从「加载 CLIP / 检查点加载器」的 CLIP 出来）<br>
+            两个可选口「提示词同步·正 / 负（可不连）」← 提示词同步的两个输出<br>
+            输出「正向 / 负向」→ 采样器的 <code>positive</code> / <code>negative</code></td>
+        <td>正负二合一（内置的「CLIP文本编码」一个字没改）。<b>口里来的优先</b>：连了就用口里那份，
+            没连就用文本框里写的。<b>两个口连不连、只连一个，都正常出图。</b></td>
+      </tr>
+      <tr>
+        <td><b>空Latent（自填宽高像素）</b></td>
+        <td>输出 <code>LATENT</code> → 采样器的 <code>latent</code></td>
+        <td>长边 / 短边像素 + 横竖朝向 + 数量；像素自动向下取整到 8 的倍数。节点上画着等比矩形预览。</td>
+      </tr>
+      <tr>
+        <td><b>套图排队</b><br>（来自提示词工具）</td>
+        <td><b>不用连线</b></td>
+        <td>要和「提示词同步」一起用：工具里点 🎞 推一整套 → 节点上一张张排队出图（能暂停 / 继续 / 停止 / 清除）。</td>
+      </tr>
+      <tr>
+        <td><b>计时器</b><br>（休息计时 + 生图效率）</td>
+        <td><b>不用连线</b></td>
+        <td>吃 ComfyUI 自己的出图事件（任何工作流都能计时）：黄条读制图时间、灰条读休息时间，到点响一声放水波。
+            ⚠️ 那颗「✔ 这张有效」<b>默认是雪藏</b>的 —— 要它回来就点「⏱ 计时设置」里那颗「已雪藏（点一下调出来）」。</td>
+      </tr>
+      <tr>
+        <td><b>游动羽翼工具栏</b></td>
+        <td><b>不用连线</b></td>
+        <td>画布上的按钮面板：① 一键把本包的节点加到画布 ② 这本说明书 ③ 改模型别名（只改显示、文件名不动）
+            ④ 🌐 打开同源的网页版提示词工具 ⑤ 小字橡皮擦（把不想看的灰字擦掉，只影响那一颗节点）。</td>
+      </tr>
+      <tr>
+        <td><b>关键词权重</b><br>（附属节点）</td>
+        <td><b>不用连线、也不会被执行</b></td>
+        <td>从优化节点的「⚖ 调整正 / 负关键词权重」叫出来的一条横长条：拖小圆钮或直接填数字。
+            <b>它只改「送去编码的那一份文本」</b>，你框里的字一个都不动。</td>
+      </tr>
+      <tr>
+        <td><b>LoRA 池</b></td>
+        <td>把画布上的 <b>LoraLoader 拖进池子上框</b>（= 吃掉它）<br>
+            池子的 <code>MODEL</code> / <code>CLIP</code> 输出 → 下游（采样器的 model、文本编码的 clip）</td>
+        <td>一池子装下所有 LoRA：点一下就「暂时失效」、再点一下恢复，<b>亮着的才叠</b>。
+            能分「角色 / 画风」（<b>角色默认最多 1 颗、画风不限</b>，两个上限都能在 ⚙ 里改）；
+            还能存组合存档、每次出图随机抽一套。熄灭的 LoRA 不参与，缺文件的也会跳过、不会报错。</td>
+      </tr>
+      <tr>
+        <td><b>自定义优化窗</b><br>（节点）</td>
+        <td><b>不用连线</b>（它把要求发给提示词工具，AI 跑在工具那边）</td>
+        <td>在画布上单独一块：写一句要求 → 点优化 → 工具里配的 AI 改好后写回这段文本。
+            <b>工具没开就用不了</b>（AI 配置只在工具里）。</td>
+      </tr>
+      <tr>
+        <td><b>图像画廊</b><br>（展示 + 存档）</td>
+        <td>输入 <code>IMAGE</code> ← 采样器出来、解码后的那张图</td>
+        <td>出图自动存进「图片存档」，按<b>一次生成 = 一组</b>排放；三页签（主页 / 收藏 / 回收站）、
+            多选批量收藏删除、点开单张放大。右键一张图还有「🔮 安全复现」—— 把那张图的参数搬回画布。</td>
+      </tr>
+      <tr>
+        <td><b>暂存节点</b><br>（下一批文本）</td>
+        <td><b>不用连线</b>（纯前端）；接上「自定义优化窗」的 <code>优化结果（可不连）</code> 之后，
+            优化结果就先落它的下框</td>
+        <td>一边出图一边攒下一批稿子：上下两框、各自分正 / 负两层，中间能拖比例；
+            「↑ 顶掉上框」换上去、「→ 送进优化节点」直接写回 CLIP 节点。「⏻ 关机」= 旁路，不收起来。</td>
+      </tr>
+      <tr>
+        <td><b>模型池</b><br>（多套模型并行）</td>
+        <td>把加载器节点 <b>拖进面板</b>（按输出类型自动归位）<br>
+            池子的 <code>MODEL</code> / <code>CLIP</code> / <code>VAE</code> 输出 → 下游</td>
+        <td>一竖列三框（紫 MODEL / 黄 CLIP / 红 VAE），几条记录 = 几套模型并排，<b>各自参数独立</b>。
+            每条名字默认取第一个拖进来的节点名，双击能改；⚙ 里能改别名、把节点吐回画布、勾「带 LoRA 池」。</td>
+      </tr>
+      <tr>
+        <td><b>黑箱</b></td>
+        <td><b>不用连线</b>（纯前端节点，不进 ComfyUI 的节点表）</td>
+        <td>工具栏第 1 格放一颗到画布，能<b>占满屏幕</b>当大面板：选 LoRA、写正负词、选比例张数，
+            点「🎨 生成」就在它内部搭一条真工作流出图；「🧨 拆掉黑箱」= 得到一套原版工作流。</td>
+      </tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>三种常见接法</h2>
+    <h3>① 最省事（推荐给新工作流）</h3>
+    <ol>
+      <li>画布上放「游动羽翼工具栏」→ 在下拉里挑「提示词同步（来自提示词工具）」→「➕ 加到画布」；</li>
+      <li>同样把「CLIP 文本编码优化节点」「空Latent（自填宽高像素）」加出来；</li>
+      <li>按上面那张图连线：<code>CLIP→优化节点</code>、<code>优化节点→K采样器</code>、<code>空Latent→K采样器</code>、<code>提示词同步→优化节点两个口</code>。</li>
+    </ol>
+    <h3>② 不想换内置的 CLIP 文本编码</h3>
+    <p>也能用，但要多做一步：<b>右键内置「CLIP文本编码」的 text 框 → Convert Widget to Input（转成输入口）</b>，再把「提示词同步」的输出接上去。</p>
+    <div class="warn">⚠️ <b>接了线就是「覆盖」关系、不是相加</b>：那个框里就算还留着老文本，也<b>不会</b>被算进去（它根本不进 API 图）。
+      想图个眼净，把框里的老文本清空即可；忘了清也不影响。</div>
+    <h3>③ 完全不动工作流</h3>
+    <p>在「提示词同步」节点里直接复制文本，手动粘到内置 CLIP 文本编码里 —— 节点不连线也能这么用。</p>
+  </section>
+
+  <section>
+    <h2>排错：连线相关的三个常见毛病</h2>
+    <ul>
+      <li><b>出图跟工具的提示词对不上</b>：先看「提示词同步」节点里是不是空的 —— 它<b>只在工具推过来的那一刻</b>有内容，
+          工作流里存的老文本会在打开 ComfyUI 时被清掉（这是故意的）。</li>
+      <li><b>优化节点不工作 / 报错</b>：八成是 <code>clip</code> 没接（它是必接的），或者接的不是 CLIP 类型。</li>
+      <li><b>连点几个按钮出的图只剩最后一个词</b>：那是「连接模式」的限制 —— 点单个按钮只送这一个词；
+          要一次全送好几个，先在工具里进购物车、再点「复制全部」。</li>
+    </ul>
+    <div class="tip">节点详情 / 每个控件的意思，看节点文件夹里的 <code>README.md</code>；工具本身的用法看《项目说明.md》。</div>
+  </section>
+</div>
+</body>
+</html>

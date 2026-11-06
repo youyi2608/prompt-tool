@@ -1,9 +1,9 @@
-# 提示词工具 8.0 正式版
+# 提示词工具 8.5 正式版
 
 给 **ComfyUI** 用的提示词 **编撰 / 组装 / 复制 / 一键推送** 工具 —— **单文件 HTML，免安装、免联网**。
 
 ⚠ 这个文件夹请放在【桌面】上，而且别改文件夹名字。
-  原因：提示词工具把「图片存档」写在 桌面\工具 8.0 正式版\图片存档，
+  原因：提示词工具把「图片存档」写在 桌面\工具 8.5 正式版\图片存档，
   启动器的词库目录也在 桌面\工作流\词库 —— 换地方或者改名字，图就存不到包旁边了。
 
 双击就能用，数据存在你自己电脑上。
@@ -19,14 +19,13 @@
 
 | 方式 | 地址 |
 |---|---|
-| **整包（推荐）** | [prompt-tool-8.0.zip](https://github.com/youyi2608/prompt-tool/releases/download/v8.0/prompt-tool-8.0.zip)（本体 + 词库包 + 互通节点含网页版 + 数据存档 + 说明文件） |
-| **国内备用（夸克网盘）** | https://pan.quark.cn/s/576065a81164　提取码 3zVC（GitHub 打不开时用这个） |
-| **只要词库** | [prompt-tool-7.0-dict.bmz](https://github.com/youyi2608/prompt-tool/releases/download/v8.0/prompt-tool-7.0-dict.bmz)（6.75 MB，工具里「📦 词库包」一步导入） |
+| **整包（推荐）** | [prompt-tool-7.0.zip](https://github.com/youyi2608/prompt-tool/releases/download/v7.0/prompt-tool-7.0.zip)（本体 + 词库包 + 互通节点含网页版 + 数据存档 + 说明文件） |
+| **只要词库** | [prompt-tool-7.0-dict.bmz](https://github.com/youyi2608/prompt-tool/releases/download/v7.0/prompt-tool-7.0-dict.bmz)（6.75 MB，工具里「📦 词库包」一步导入） |
 | 全部发布页 | <https://github.com/youyi2608/prompt-tool/releases> |
 | 夸克网盘（国内更快） | https://pan.quark.cn/s/10be6fe940ae?pwd=TVQp 提取码 `TVQp` |
-| 国内加速（GitHub 打不开时） | 在上面任意链接前面加 `https://ghproxy.net/` 或 `https://ghfast.top/`，例如<br>`https://ghproxy.net/https://github.com/youyi2608/prompt-tool/releases/download/v8.0/prompt-tool-8.0.zip` |
+| 国内加速（GitHub 打不开时） | 在上面任意链接前面加 `https://ghproxy.net/` 或 `https://ghfast.top/`，例如<br>`https://ghproxy.net/https://github.com/youyi2608/prompt-tool/releases/download/v7.0/prompt-tool-7.0.zip` |
 
-> GitHub 会把附件里的中文名改成英文（所以附件叫 `prompt-tool-8.0.zip` / `prompt-tool-7.0-dict.bmz`），
+> GitHub 会把附件里的中文名改成英文（所以附件叫 `prompt-tool-7.0.zip` / `prompt-tool-7.0-dict.bmz`），
 > 下载后解压就是上面那张表里的东西。
 
 整包里有什么：
@@ -34,11 +33,11 @@
 | 文件 | 说明 |
 |---|---|
 | `提示词工具.html` | 工具本体（单文件，所有功能都在里面） |
-| `翻译库存档\翻译库存档\词库.bmz` | 词库包：32 万条大词表 + 机翻表 + 手译表 + 共现邻居表 + 标签分类表（加密单文件，工具里一步导入；**就在「翻译库存档」文件夹里**，不散在包根） |
+| `翻译库存档\词库.bmz` | 词库包：32 万条大词表 + 机翻表 + 手译表 + 共现邻居表 + 标签分类表（加密单文件，工具里一步导入；**就在「翻译库存档」文件夹里**，不散在包根） |
 | `ComfyUI-PromptSync\` | ComfyUI 互通节点（可选；里面还带了一份「网页版工具」，见下文） |
 | `数据存档\数据存档_20261025.bmz` | 作者自己那份数据（**加密存档包**：434 个按钮 + 大分类与分类布局 + 33 条负词；工具里「手动读档」直接选它） |
-| `私发说明.txt` / `使用说明_8.0.txt` | 上手说明 |
-| `更新公告_8.0.txt` / `README.md` | 这一版更新了什么 / 仓库首页备份 |
+| `私发说明.txt` / `使用说明_8.5.txt` | 上手说明 |
+| `更新公告_8.5.txt` / `README.md` | 这一版更新了什么 / 仓库首页备份 |
 
 ---
 
@@ -47,7 +46,7 @@
 1. 双击 **`提示词工具.html`**（建议 Chrome / Edge 打开）
 2. 右上角「读档」→「📂 手动读档」→ 选 `数据存档\数据存档_20261025.bmz`
 3. 词库：**包版第一次打开会自动装上**（32 万条的加密词库内嵌在 HTML 里，不用点任何东西）；
-   想换一份或更新，再走右上角「拼装」→ **「📦 词库包」** → 选 `翻译库存档\翻译库存档\词库.bmz`
+   想换一份或更新，再走右上角「拼装」→ **「📦 词库包」** → 选 `翻译库存档\词库.bmz`
    → 等 1~2 秒即可。**只需要导这一次**，以后刷新、重开都自动在。
 
 ---
@@ -68,7 +67,7 @@
 1. 把 `ComfyUI-PromptSync` **整个文件夹**复制进 ComfyUI 的 `custom_nodes\`，**重启 ComfyUI**
    - 官方便携版：`…\ComfyUI_windows_portable\ComfyUI\custom_nodes\`
    - 秋叶整合包：`…\ComfyUI-aki-vX\ComfyUI\custom_nodes\`
-2. 确认黑窗口里出现这一行：`[提示词工具] ✅ 互通节点已加载（版本 1.5）：/prompt_sync/ping 可用`
+2. 确认黑窗口里出现这一行：`[提示词工具] ✅ 互通节点已加载（版本 2.0）：/prompt_sync/ping 可用`
 3. 工具顶栏**左上角**点亮 🔗 → 之后点按钮不再复制，而是把正 / 负提示词直接写进节点文本框
 
 ### ⚠️ 连不上？新版 ComfyUI 会「不让别的网页访问它」

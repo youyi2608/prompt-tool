@@ -1,0 +1,123 @@
+{
+  "_note": "黑箱 / LoRA 池用的固定名单（13 个，2026-10-24 第 238 批定）。bundled=true 的三颗随分享包一起发；其余只给 civitai 链接，不打包（civitai 没有“允许再分发”这一项）。file 必须是 models/loras 里的真文件名。",
+  "version": 1,
+  "items": [
+    {
+      "file": "Exusiai the New CovenantV2-Nuclear1811-IL.safetensors",
+      "name": "明日方舟能天使",
+      "kind": "char",
+      "bundled": true,
+      "url": "",
+      "trigger": "Exusiai the New Covenant",
+      "weight": [0.6, 0.9]
+    },
+    {
+      "file": "yixuan-AltOutfit-Reijiboo-IL-v1.safetensors",
+      "name": "斜刘海仪玄",
+      "kind": "char",
+      "bundled": false,
+      "url": "https://civitai.com/models/2023690",
+      "trigger": "yixuan",
+      "weight": [0.7, 0.9]
+    },
+    {
+      "file": "ds-whalemaid-chibi-anima-d32.safetensors",
+      "name": "Q版鲸鱼娘",
+      "kind": "char",
+      "bundled": false,
+      "url": "https://civitai.com/models/2845839",
+      "trigger": "ds_whalemaid",
+      "weight": [0.7, 0.9]
+    },
+    {
+      "file": "iceqbe-2_v1_epoch60.safetensors",
+      "name": "涩涩画风",
+      "kind": "style",
+      "bundled": true,
+      "url": "",
+      "trigger": "",
+      "weight": [0.5, 0.7]
+    },
+    {
+      "file": "bantan-step00007000.safetensors",
+      "name": "油油画风",
+      "kind": "style",
+      "bundled": true,
+      "url": "",
+      "trigger": "",
+      "weight": [0.5, 0.7]
+    },
+    {
+      "file": "style-AIIllustOjisan-anima-d16.safetensors",
+      "name": "减龄瞳孔明透",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/2564226",
+      "trigger": "@411llust0j1s4n",
+      "weight": [0.6, 0.9]
+    },
+    {
+      "file": "style-BlueArchive-B1-anima-d48.safetensors",
+      "name": "蔚蓝档案",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/2530730",
+      "trigger": "",
+      "weight": [0.6, 0.8]
+    },
+    {
+      "file": "style-MythSmoothLines-anima-d32.safetensors",
+      "name": "柔顺注重线条",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/599757",
+      "trigger": "Smo0thL1nes",
+      "weight": [0.6, 0.9]
+    },
+    {
+      "file": "style-GothicNeon-anima-d8.safetensors",
+      "name": "夜光霓虹",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/888231",
+      "trigger": "g0thic n30n, neon lights, glowing",
+      "weight": [0.5, 0.8]
+    },
+    {
+      "file": "style-xipa-anima-d16.safetensors",
+      "name": "清透日系薄涂",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/2487573",
+      "trigger": "@xipa2026late03-05",
+      "weight": [0.6, 0.9]
+    },
+    {
+      "file": "style-theobrobine-anima.safetensors",
+      "name": "薄雾",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/897828",
+      "trigger": "theine",
+      "weight": [0.6, 0.9]
+    },
+    {
+      "file": "2MMDVMYC7V79R9Y08XMSBH5820.safetensors",
+      "name": "偏欧美动漫肉感",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/2729990?modelVersionId=3068975",
+      "trigger": "taijibahuang",
+      "weight": [0.6, 0.8]
+    },
+    {
+      "file": "E5A4AAE69E81E585ABE8.Vcnn.safetensors",
+      "name": "偏写实高明透",
+      "kind": "style",
+      "bundled": false,
+      "url": "https://civitai.com/models/2782355?modelVersionId=3133907",
+      "trigger": "",
+      "weight": [0.6, 0.8]
+    }
+  ]
+}
